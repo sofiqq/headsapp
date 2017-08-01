@@ -143,6 +143,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
                         gameDo.setText((millisUntilFinished + 200) / 1000 + "");
                     }
 
+                    //askar loh
                     @Override
                     public void onFinish() {
                         gameStart = true;
