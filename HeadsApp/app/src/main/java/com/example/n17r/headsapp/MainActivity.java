@@ -96,20 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 //    asdasdasdas
-//    dasd
-//            asd
-//    as
-//                    d
-//    asd
-//                            as
-//    d
-//                                    asd
-//    as
-//                                            d
-//    asd
-//                                                    as
-//    dasd
-//                                                            as
 //    dasas
     public static ArrayList<AllWords> getBase(int intLevel) {
         intLevel--;

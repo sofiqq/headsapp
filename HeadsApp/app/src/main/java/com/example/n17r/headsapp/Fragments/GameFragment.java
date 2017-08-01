@@ -106,7 +106,6 @@ public class GameFragment extends Fragment implements SensorEventListener {
 
         Bundle bundle = getArguments();
         level = bundle.getInt("level");
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(getActivity());
         Log.v("level", level + "");
         if (level == 1) {
             words = MainActivity.getBase(2);
