@@ -49,8 +49,6 @@ public class GameFragment extends Fragment implements SensorEventListener {
     private boolean gameStart;
 
     private int id;
-    private int cameraStop = 0;
-    private SurfaceView sv;
     private int level;
     private int start = 0;
     private int startTimer = 0;
