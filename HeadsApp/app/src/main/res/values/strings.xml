@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">HeadsApp</string>
+    <string name="menu_stars">Звезды</string>
+    <string name="game_do">Поднесите к голове</string>
+    <string name="level_stars">Звезды</string>
+    <string name="level_animals">Животные</string>
+    <string name="play">Играть!</string>
+    <string name="back">Вернуться в меню</string>
+    <string name="choose_level">Выберите категорию</string>
+</resources>

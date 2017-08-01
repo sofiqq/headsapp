@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "918700193932",
+    "firebase_url": "https://headsapp-application.firebaseio.com",
+    "project_id": "headsapp-application",
+    "storage_bucket": "headsapp-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:918700193932:android:8cbeaacc22669387",
+        "android_client_info": {
+          "package_name": "com.example.n17r.headsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "918700193932-cbbnoi6leiidb0oh7udl3arq0mk278vn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFFXrdpMBeBEzW3sn8aMwHY-OPFOSpSXQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

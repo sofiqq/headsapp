@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:id="@+id/ll"
+    android:background="@drawable/gradient">
+
+
+    <TextView
+        android:id="@+id/game_do"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rotation="90"
+        android:text="@string/game_do"
+        android:textSize="32sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="250dp"/>
+
+    <TextView
+        android:id="@+id/game_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rotation="90"
+        android:layout_marginRight="80dp"
+        android:visibility="invisible"
+        android:textSize="22sp"
+        android:layout_gravity="center"
+        />
+
+
+
+
+</LinearLayout>
