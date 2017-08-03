@@ -5,7 +5,13 @@
     android:weightSum="1"
     android:id="@+id/ll"
     android:background="@drawable/gradient">
+    <ImageView
+        android:layout_width="500dp"
+        android:layout_height="match_parent"
+        android:id="@+id/image"
+        android:visibility="gone">
 
+    </ImageView>
 
     <TextView
         android:id="@+id/game_do"

@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
 
     private TextView gameDo;
     private TextView gameTimer;
+    private ImageView image;
 
     private SensorManager mSensorManager;
     private Sensor mOrientation;
@@ -84,6 +86,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
         mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         gameTimer = (TextView) rootView.findViewById(R.id.game_timer);
         linearLayout = (LinearLayout) rootView.findViewById(R.id.ll);
+        image = (ImageView) rootView.findViewById(R.id.image);
 
         gameStart = false;
         id = 0;
