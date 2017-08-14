@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -22,15 +23,17 @@ import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.n17r.headsapp.MainActivity;
 import com.example.n17r.headsapp.R;
 import com.example.n17r.headsapp.models.AllWords;
@@ -49,7 +52,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
 
     private boolean gameStart;
 
-    private int id;
+    private int id = 0;
     private int level;
     private int start = 0;
     private int startTimer = 0;
@@ -63,11 +66,12 @@ public class GameFragment extends Fragment implements SensorEventListener {
 
     private TextView gameDo;
     private TextView gameTimer;
-    private ImageView image;
+    private ImageView image, load;
 
     private SensorManager mSensorManager;
     private Sensor mOrientation;
 
+    private FrameLayout frameLayout;
     private LinearLayout linearLayout;
 
     private SoundPool mSoundPool;
@@ -85,16 +89,21 @@ public class GameFragment extends Fragment implements SensorEventListener {
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         gameTimer = (TextView) rootView.findViewById(R.id.game_timer);
+        frameLayout = (FrameLayout) rootView.findViewById(R.id.fl);
         linearLayout = (LinearLayout) rootView.findViewById(R.id.ll);
         image = (ImageView) rootView.findViewById(R.id.image);
+        load = (ImageView) rootView.findViewById(R.id.load);
+
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        image.getLayoutParams().width = size.x;
 
         gameStart = false;
-        id = 0;
-                if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            // Для устройств до Android 5
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             createOldSoundPool();
         } else {
-            // Для новых устройств
             createNewSoundPool();
         }
         mAssetManager = getActivity().getAssets();
@@ -107,7 +116,6 @@ public class GameFragment extends Fragment implements SensorEventListener {
 
         Bundle bundle = getArguments();
         level = bundle.getInt("level");
-        Log.v("level", level + "");
         if (level == 1) {
             words = MainActivity.getBase(2);
         }
@@ -117,6 +125,9 @@ public class GameFragment extends Fragment implements SensorEventListener {
             questions.add(i);
         }
         Collections.shuffle(questions);
+        Glide.with(getActivity())
+                .load(words.get(questions.get(id)).getPicture())
+                .into(image);
         return rootView;
     }
 
@@ -136,7 +147,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.values[2] > 70) {
-            linearLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient));
+            frameLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient));
             if (startTimer == 0) {
                 startTimer = 1;
                 CountDownTimer timer = new CountDownTimer(3 * 1000, 900) {
@@ -146,9 +157,14 @@ public class GameFragment extends Fragment implements SensorEventListener {
                         gameDo.setText((millisUntilFinished + 200) / 1000 + "");
                     }
 
-                    //askar loh
                     @Override
                     public void onFinish() {
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT
+                        );
+
+                        image.setVisibility(View.VISIBLE);
                         gameStart = true;
                         gameTimer.setVisibility(View.VISIBLE);
                         if (id == words.size()) {
@@ -156,12 +172,17 @@ public class GameFragment extends Fragment implements SensorEventListener {
                             gameDo.setText("Вы угадали все слова");
                         } else {
                             gameDo.setText(words.get(questions.get(id)).getName());
+                            Glide.with(getActivity())
+                                    .load(words.get(questions.get(id)).getPicture())
+                                    .into(image);
+                            if (questions.size() != id + 1)
+                                Glide.with(getActivity())
+                                        .load(words.get(questions.get(id + 1)).getPicture())
+                                        .into(load);
                             id++;
                         }
-                        //VIDEO RECORDER
-                        Log.e("HERE", "SOUND Go");
                         playSound(startSound);
-                        CountDownTimer timerGame = new CountDownTimer(10 * 1000, 1000) {
+                        CountDownTimer timerGame = new CountDownTimer(60 * 1000, 1000) {
                             @Override
                             public void onTick(long millisUntilFinished) {
                                 gameTimer.setText("Осталось " + millisUntilFinished / 1000 + " сек.");
@@ -172,7 +193,6 @@ public class GameFragment extends Fragment implements SensorEventListener {
                             public void onFinish() {
                                 if (start == 1 && gameFinished == 0) {
                                     ansStr.add(words.get(questions.get(id - 1)).getName());
-                                    Log.e("hello", "hello");
                                     ansBoolean.add(0);
                                 }
                                 FragmentManager fragmentManager = getFragmentManager();
@@ -196,15 +216,23 @@ public class GameFragment extends Fragment implements SensorEventListener {
                     if (id == words.size()) {
                         gameFinished++;
                         gameDo.setText("Вы угадали все слова");
+                        image.setVisibility(View.GONE);
+                        gameTimer.setVisibility(View.INVISIBLE);
                     } else {
                         gameDo.setText(words.get(questions.get(id)).getName());
+                        Glide.with(getActivity())
+                                .load(words.get(questions.get(id)).getPicture())
+                                .into(image);
+                        if (questions.size() != id + 1)
+                            Glide.with(getActivity())
+                                    .load(words.get(questions.get(id + 1)).getPicture())
+                                    .into(load);
                         id++;
                     }
                 }
             }
             start = 1;
         }
-        //Log.d("ANGLE", event.values[0] + " " + event.values[1] + " " + event.values[2]);
         if (start == 1 && gameStart == true) {
             if (Math.abs(event.values[2]) < 50 && Math.abs(event.values[1]) > 140) {
                 String ansStringTrue = gameDo.getText().toString();
@@ -215,7 +243,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
                     ansBoolean.add(1);
                     playSound(trueSound);
                     gameDo.setText("Правильно");
-                    linearLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient_true));
+                    frameLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient_true));
                     start = 0;
                     answer = 1;
                 }
@@ -227,7 +255,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
                     ansStr.add(ansStringFalse);
                     ansBoolean.add(0);
                     playSound(falseSound);
-                    linearLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient_false));
+                    frameLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient_false));
                     gameDo.setText("Пасс");
                     start = 0;
                     answer = 1;
@@ -246,10 +274,12 @@ public class GameFragment extends Fragment implements SensorEventListener {
                 .setAudioAttributes(attributes)
                 .build();
     }
+
     @SuppressWarnings("deprecation")
     private void createOldSoundPool() {
         mSoundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
     }
+
     private int loadSound(String fileName) {
         AssetFileDescriptor afd;
         try {
@@ -262,6 +292,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
         }
         return mSoundPool.load(afd, 1);
     }
+
     private int playSound(int sound) {
         if (sound > 0) {
             mStreamID = mSoundPool.play(sound, 1, 1, 1, 0, 1);
@@ -278,19 +309,13 @@ public class GameFragment extends Fragment implements SensorEventListener {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) !=
                 PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA)) {
                 return false;
             }
 
-            // No explanation needed, we can request the permission.
-
             ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CAMERA},
                     1);
             return false;
-            // MY_PERMISSIONS_REQUEST is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
         }
         return true;
     }
@@ -299,19 +324,13 @@ public class GameFragment extends Fragment implements SensorEventListener {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) !=
                 PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.RECORD_AUDIO)) {
                 return false;
             }
 
-            // No explanation needed, we can request the permission.
-
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO},
                     1);
             return false;
-            // MY_PERMISSIONS_REQUEST is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
         }
         return true;
     }
@@ -325,28 +344,11 @@ public class GameFragment extends Fragment implements SensorEventListener {
                 return false;
             }
 
-            // No explanation needed, we can request the permission.
-
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     1);
             return false;
-            // MY_PERMISSIONS_REQUEST is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
         }
         return true;
-    }
-
-    public void stopCamera() {
-        try {
-            recorder.prepare();
-            recorder.stop();
-            recorder.reset();
-
-            recorder.release();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }
