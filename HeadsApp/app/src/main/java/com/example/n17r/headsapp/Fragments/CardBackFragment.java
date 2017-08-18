@@ -35,15 +35,15 @@ public class CardBackFragment extends Fragment {
         play = (CardView) view.findViewById(R.id.play);
 
         Bundle bundle = getArguments();
-        int level = bundle.getInt("level_chosen", 0);
-        if (level == 1) {
+        String level = bundle.getString("level_chosen");
+        if (level == "Stars") {
             title.setText("Звезды");
             description.setText("Звезды, известные личности Казахстана");
             play.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle args = new Bundle();
-                    args.putInt("level", 1);
+                    args.putString("level", "Stars");
                     FragmentManager fragmentManager = getFragmentManager();
                     GameFragment fragment = new GameFragment();
                     fragment.setArguments(args);
@@ -53,14 +53,14 @@ public class CardBackFragment extends Fragment {
                 }
             });
         }
-        if (level == 2) {
+        if (level == "RedBook") {
             title.setText("Животные");
             description.setText("Животные Красной книги Казахстана");
             play.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle args = new Bundle();
-                    args.putInt("level", 2);
+                    args.putString("level", "Animals");
                     FragmentManager fragmentManager = getFragmentManager();
                     GameFragment fragment = new GameFragment();
                     fragment.setArguments(args);
@@ -70,6 +70,42 @@ public class CardBackFragment extends Fragment {
                 }
             });
         }
+        if (level == "Children") {
+            title.setText("Для детей");
+            description.setText("Несложные и забавные слова");
+            play.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle args = new Bundle();
+                    args.putString("level", "Children");
+                    FragmentManager fragmentManager = getFragmentManager();
+                    GameFragment fragment = new GameFragment();
+                    fragment.setArguments(args);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, fragment)
+                            .commit();
+                }
+            });
+        }
+
+        if (level == "Act") {
+            title.setText("Действия");
+            description.setText("Различные действия по примеру 'Одевать шапку'");
+            play.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle args = new Bundle();
+                    args.putString("level", "Act");
+                    FragmentManager fragmentManager = getFragmentManager();
+                    GameFragment fragment = new GameFragment();
+                    fragment.setArguments(args);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, fragment)
+                            .commit();
+                }
+            });
+        }
+
 
         return view;
     }

@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -33,9 +34,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.n17r.headsapp.MainActivity;
 import com.example.n17r.headsapp.R;
+import com.example.n17r.headsapp.RoolsActivity;
 import com.example.n17r.headsapp.models.AllWords;
 
 import java.io.IOException;
@@ -52,8 +53,10 @@ public class GameFragment extends Fragment implements SensorEventListener {
 
     private boolean gameStart;
 
+    private CountDownTimer timer, timerGame;
+
     private int id = 0;
-    private int level;
+    private String level;
     private int start = 0;
     private int startTimer = 0;
     private int answer = 0;
@@ -66,7 +69,8 @@ public class GameFragment extends Fragment implements SensorEventListener {
 
     private TextView gameDo;
     private TextView gameTimer;
-    private ImageView image, load;
+    //private ImageView image;
+    private ImageView load;
 
     private SensorManager mSensorManager;
     private Sensor mOrientation;
@@ -91,14 +95,15 @@ public class GameFragment extends Fragment implements SensorEventListener {
         gameTimer = (TextView) rootView.findViewById(R.id.game_timer);
         frameLayout = (FrameLayout) rootView.findViewById(R.id.fl);
         linearLayout = (LinearLayout) rootView.findViewById(R.id.ll);
-        image = (ImageView) rootView.findViewById(R.id.image);
+        //image = (ImageView) rootView.findViewById(R.id.image);
         load = (ImageView) rootView.findViewById(R.id.load);
+
 
 
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        image.getLayoutParams().width = size.x;
+        //image.getLayoutParams().width = size.x;
 
         gameStart = false;
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -115,19 +120,23 @@ public class GameFragment extends Fragment implements SensorEventListener {
         ansBoolean = new ArrayList<>();
 
         Bundle bundle = getArguments();
-        level = bundle.getInt("level");
-        if (level == 1) {
-            words = MainActivity.getBase(2);
-        }
-        if (level == 2)
-            words = MainActivity.getBase(1);
+        level = bundle.getString("level");
+        if (level == "Stars")
+            words = MainActivity.getBase("Stars");
+        if (level == "Animals")
+            words = MainActivity.getBase("Animals");
+        if (level == "Children")
+            words = MainActivity.getBase("Children");
+        if (level == "Act")
+            words = MainActivity.getBase("Act");
         for (int i = 0; i < words.size(); i++) {
             questions.add(i);
+            Log.e("here", words.get(i).getName());
         }
         Collections.shuffle(questions);
-        Glide.with(getActivity())
-                .load(words.get(questions.get(id)).getPicture())
-                .into(image);
+//        Glide.with(getActivity())
+//                .load(words.get(questions.get(id)).getPicture())
+//                .into(image);
         return rootView;
     }
 
@@ -150,7 +159,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
             frameLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient));
             if (startTimer == 0) {
                 startTimer = 1;
-                CountDownTimer timer = new CountDownTimer(3 * 1000, 900) {
+                timer = new CountDownTimer(3 * 1000, 900) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         playSound(secondSound);
@@ -164,7 +173,7 @@ public class GameFragment extends Fragment implements SensorEventListener {
                                 LinearLayout.LayoutParams.MATCH_PARENT
                         );
 
-                        image.setVisibility(View.VISIBLE);
+                        //image.setVisibility(View.VISIBLE);
                         gameStart = true;
                         gameTimer.setVisibility(View.VISIBLE);
                         if (id == words.size()) {
@@ -172,20 +181,20 @@ public class GameFragment extends Fragment implements SensorEventListener {
                             gameDo.setText("Вы угадали все слова");
                         } else {
                             gameDo.setText(words.get(questions.get(id)).getName());
-                            Glide.with(getActivity())
-                                    .load(words.get(questions.get(id)).getPicture())
-                                    .into(image);
-                            if (questions.size() != id + 1)
-                                Glide.with(getActivity())
-                                        .load(words.get(questions.get(id + 1)).getPicture())
-                                        .into(load);
+//                            Glide.with(getActivity())
+//                                    .load(words.get(questions.get(id)).getPicture())
+//                                    .into(image);
+//                            if (questions.size() != id + 1)
+//                                Glide.with(getActivity())
+//                                        .load(words.get(questions.get(id + 1)).getPicture())
+//                                        .into(load);
                             id++;
                         }
                         playSound(startSound);
-                        CountDownTimer timerGame = new CountDownTimer(60 * 1000, 1000) {
+                        timerGame = new CountDownTimer(60 * 1000, 1000) {
                             @Override
                             public void onTick(long millisUntilFinished) {
-                                gameTimer.setText("Осталось " + millisUntilFinished / 1000 + " сек.");
+                                gameTimer.setText("0:" + millisUntilFinished / 1000);
 
                             }
 
@@ -216,17 +225,17 @@ public class GameFragment extends Fragment implements SensorEventListener {
                     if (id == words.size()) {
                         gameFinished++;
                         gameDo.setText("Вы угадали все слова");
-                        image.setVisibility(View.GONE);
+                        //image.setVisibility(View.GONE);
                         gameTimer.setVisibility(View.INVISIBLE);
                     } else {
                         gameDo.setText(words.get(questions.get(id)).getName());
-                        Glide.with(getActivity())
-                                .load(words.get(questions.get(id)).getPicture())
-                                .into(image);
-                        if (questions.size() != id + 1)
-                            Glide.with(getActivity())
-                                    .load(words.get(questions.get(id + 1)).getPicture())
-                                    .into(load);
+//                        Glide.with(getActivity())
+//                                .load(words.get(questions.get(id)).getPicture())
+//                                .into(image);
+//                        if (questions.size() != id + 1)
+//                            Glide.with(getActivity())
+//                                    .load(words.get(questions.get(id + 1)).getPicture())
+//                                    .into(load);
                         id++;
                     }
                 }
@@ -351,4 +360,11 @@ public class GameFragment extends Fragment implements SensorEventListener {
         return true;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (timer != null)
+        timer.cancel();
+        //timerGame.cancel();
+    }
 }

@@ -30,14 +30,22 @@ public class CardFontFragment extends Fragment {
         linearLayout = (LinearLayout) view.findViewById(R.id.ll_front);
 
         Bundle bundle = getArguments();
-        int level = bundle.getInt("level", 0);
-        if (level == 1) {
+        String level = bundle.getString("level");
+        if (level == "Stars") {
             title.setText("Звезды");
             linearLayout.setBackgroundDrawable( getResources().getDrawable(R.drawable.pevec) );
         }
-        if (level == 2) {
+        if (level == "RedBook") {
             linearLayout.setBackgroundDrawable( getResources().getDrawable(R.drawable.redbook) );
             title.setText("Животные");
+        }
+        if (level == "Children") {
+            title.setText("Для детей");
+            linearLayout.setBackgroundDrawable( getResources().getDrawable(R.drawable.children) );
+        }
+        if (level == "Act") {
+            title.setText("Действия");
+            linearLayout.setBackgroundDrawable( getResources().getDrawable(R.drawable.pantomima) );
         }
 
 
