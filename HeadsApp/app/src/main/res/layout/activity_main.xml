@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.n17r.headsapp.MainActivity">
+    tools:context="com.headsapp.n17r.headsapp.MainActivity">
 
     <LinearLayout
         android:id="@+id/container"
